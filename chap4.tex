@@ -1,0 +1,84 @@
+\chapter{Tracking student progress using linked NAPLAN data} \label{chap4}
+
+\section{Introduction}
+
+The Victorian cohort that sat NAPLAN in Year 3 in 2009 did Year 9 NAPLAN in 2015. They provide a rich source of data to track progress over six years of schooling. Our methodology analyses this cohort in two different ways:
+\begin{itemize}
+\item by student background (household SES, school SES, geolocation of school)
+\item by NAPLAN score in Year 3.\footnote{We classify students according to the 20th, 50th, and 80th percentiles of Victorian performance, which we refer to as `low, medium, and high' achievers respectively.}
+\end{itemize}
+When tracking results and progress, we report the progress made by the median student within each SES sub-group, or for the median student starting from a given percentile. While results are reported in terms of our own measure, \textit{comparative year levels} and \textit{years of progress}, the analysis takes place using NAPLAN scale scores and gain scores; at the very last step these results are converted to comparative year levels.
+
+\section{Estimating median NAPLAN scale scores}
+
+\subsection{SES sub-groups} \label{sec:ses_sub}
+
+For each SES sub-group, we estimate the NAPLAN scale score (for each of numeracy and reading) and the corresponding comparative year level of the median student in Years 3, 5, 7, and 9. The obvious way to do this is via the sample median in each year level, but this approach could lead to progress being overstated for some sub-groups. This is because there are more missing data in higher year levels, due to greater levels of absenteeism and withdrawal, as well as students who leave Victoria. As Section \ref{sec:missing} shows, students who miss one or more tests are more likely to come from lower SES backgrounds, and typically make smaller gains than other students even after controlling for SES background and prior NAPLAN score. This means the median student that sat NAPLAN in Year 9 is likely to have been above the median student in Year 3.\footnote{If students are tracked consistently, then the median Year 3 student is expected to match up to the median Year 9 student.}
+
+It is difficult to account for all the bias due to missing data, but we take an approach to estimating median scores that aims to reduce this bias. The sample median of each sub-group is used to estimate the population sub-group median in Year 3:
+\begin{equation}
+\widehat{Q_{50}\left[X_{j,3}|s\right]} = \tilde{x}_{j,3,s}
+\end{equation}
+Where $s$ is an indicator of sub-group.\footnote{See \Vref{chap3} for explanation of notation.} This is likely to be an overestimate of the population median for Year 3, given the patterns of missing data. But the proportion of missing data in Year 3 is relatively small, meaning that the bias is likely to be small.
+
+For Years 5, 7, and 9, we define a function for the median sub-group NAPLAN score conditional on Year 3 score:
+\begin{equation} \begin{array}{c}
+Q_{50}\left[X_{j,Y}|s,X_{j,3}\right] = h_{j,Y,s}\left(X_{j,3}\right) \\
+Y = 5,7,9
+\end{array} \end{equation}
+The functions $h_{j,Y,s}$ are estimated for $j = $ reading and numeracy, $Y = 5, 7, 9$, and for each subgroup using least absolute deviations. Restricted cubic regression splines are used to allow for non-linearity in $h_{j,Y,s}$. These functions are evaluated at the estimated Year 3 sample median for each sub-group, $\tilde{x}_{j,3,s}$, to estimate each sub-group population medians for Years 5, 7, and 9:
+\begin{equation} \begin{array}{c}
+\widehat{Q_{50}\left[X_{j,Y}|s\right]} = \widehat{h}_{j,y,s}\left(\tilde{x}_{j,3,s}\right) \\
+Y = 5,7,9
+\end{array} \end{equation}
+These estimates are typically lower than the sample medians at higher year levels, suggesting that this approach reduces some of the bias due to missing data.\footnote{This approach is still likely to overestimate the sub-group medians, since excluding missing data is likely to overstate gain scores, as evidenced by \Vref{fig:missing}.}
+
+\subsection{Estimating percentiles}
+
+We estimate the 20th, 50th, and 80th percentiles for the population in Year 3:
+\begin{equation} \begin{array}{c}
+\widehat{Q_{20}\left[X_{j,3}\right]} = \tilde{x}^{(20)}_{j,3} \\
+\widehat{Q_{50}\left[X_{j,3}\right]} = \tilde{x}^{(50)}_{j,3} \\
+\widehat{Q_{80}\left[X_{j,3}\right]} = \tilde{x}^{(80)}_{j,3}
+\end{array} \end{equation}
+These are used to track progress within each sub-group (and for the population) for a given level of ability in Year 3. We estimate the median NAPLAN score in Years 5, 7, and 9 conditional on sub-group \textit{and} Year 3 percentile:
+\begin{equation} \begin{array}{c}
+\widehat{Q_{50}\left[X_{j,Y}|s,X_{j,3}\right]} = \widehat{h}_{j,y,s}\left(\tilde{x}^{(P)}_{j,3}\right) \\
+Y = 5,7,9
+\end{array} \end{equation}
+where $P$ represents the Year 3 percentile, and $\widehat{h}_{j,y,s}$ has been estimated separately for each year level and sub-group.\footnote{While $\widehat{h}_{j,y,s}$ is estimated separately for different sub-groups, it is not estimated separately for different percentiles.}
+
+This means that for every SES sub-group, we have estimated median NAPLAN scale scores in Years 3, 5, 7, and 9, both for the median of the sub-group, and conditional on the Year 3 percentile for the Victorian population. \Cref{tab:below_dip} shows these results for students who do not have a parent with a degree or diploma. Given this is a low SES sub-group, the group median results are, unsurprisingly, lower than the results for those at the 50th percentile of the Victorian population in Year 3.
+
+\begin{table}[h]
+  \centering
+  \captionwithunits{For each sub-group we estimate both group medians and the medians conditional on Year 3 percentile}{Estimated median NAPLAN scale score, parental education below diploma, Victorian 2009--15 cohort}
+
+    \begin{tabular}{lcrrr}
+          &       & \multicolumn{3}{c}{Year 3 percentile} \\
+
+          & \multicolumn{1}{c}{Group median} & \multicolumn{3}{c}{(Victorian population)} \\     \cmidrule(lr){3-5}
+    Year level & (below diploma) & \multicolumn{1}{c}{20th} & \multicolumn{1}{c}{50th} & \multicolumn{1}{c}{80th} \\ \midrule
+    Year 3 & \multicolumn{1}{c}{390.7} & 344.5 & 408.9 & 476.9 \\
+    Year 5 & \multicolumn{1}{c}{477.0} & 452.4 & 487.1 & 526.2 \\
+    Year 7 & \multicolumn{1}{c}{520.8} & 496.9 & 530.4 & 570.6 \\
+    Year 9 & \multicolumn{1}{c}{570.6} & 549.4 & 579.3 & 615.3 \\
+    \bottomrule
+    \end{tabular}%
+  \label{tab:below_dip}%
+\begin{flushleft}\source{Grattan analysis of \textcite{vcaa2015}.}\end{flushleft}
+\vspace{-6pt}
+\end{table}%
+
+\section{Converting NAPLAN scale scores to comparative year levels}
+
+Having estimated a range of NAPLAN scale scores for SES sub-groups, it is then possible to convert these to comparative year levels. As outlined in Section \ref{sec:theoretical}, every NAPLAN scale score within the range of the median student between Year 1 and Year 13 has a corresponding comparative year level. Having estimated $\widehat{f}_{j}(Y)$, it is straightforward to find the value of $Y$ that corresponds to a given $\widehat{f}_{j}(Y)$. The reported comparative year level includes both the schooling year and any additional months of learning. 
+
+Years of progress between Years 3 and 9 is then calculated as the difference in comparative year levels between Years 3 and 9. This is also reported in terms of years and months. The median student is expected to make six years of progress over this time.
+
+\section{Robustness of student progress results} \label{sec:robust_progress}
+
+\begin{itemize}
+    \item results with confidence bounds (examples). Note that all results with confidence bounds are available online
+    \item results using 2008--14 cohort
+\end{itemize}
